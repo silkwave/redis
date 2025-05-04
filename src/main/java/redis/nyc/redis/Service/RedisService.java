@@ -65,6 +65,9 @@ public class RedisService {
         } else {
             log.warn("No keys found in Redis."); // 키가 없을 때 경고 로그 추가
         }
+
+        log.info("Fetched all keys and their values from Redis.{}" ,resultList); // 로그 추가   
+             
         return resultList;
     }
 

@@ -63,5 +63,6 @@ public class RedisController {
     public ResponseEntity<List<Map<String, String>>> getAllKeysAndValues() {
         List<Map<String, String>> keysAndValues = redisService.getAllKeysAndValues();
         return ResponseEntity.ok(keysAndValues);
+        
     }
 }

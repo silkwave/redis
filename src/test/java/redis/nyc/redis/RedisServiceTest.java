@@ -38,7 +38,7 @@ public class RedisServiceTest {
         redisService.saveString(TEST_KEY, TEST_VALUE);
 
         // when
-        redisService.deleteKey(TEST_KEY);
+        redisService.deleteKey(TEST_KEY);  
         String value = redisService.getString(TEST_KEY);
 
         // then

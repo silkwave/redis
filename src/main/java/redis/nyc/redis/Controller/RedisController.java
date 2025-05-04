@@ -54,7 +54,7 @@ public class RedisController {
             redisService.deleteKey(key);
             return ResponseEntity.ok("Deleted key: " + key);
         } else {
-            return ResponseEntity.status(404).body("Key not found: 333" + key);
+            return ResponseEntity.status(404).body("Key not found: 4444" + key);
         }
     }
 

@@ -42,7 +42,7 @@ public class RedisController {
             redisService.saveString(key, value);
             return ResponseEntity.ok("Updated key: " + key + " with new value: " + value);
         } else {
-            return ResponseEntity.status(404).body("Key not found: " + key);
+            return ResponseEntity.status(404).body("Key not found  :  " + key);
         }
     }
 

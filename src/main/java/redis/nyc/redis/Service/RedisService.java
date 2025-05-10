@@ -17,6 +17,7 @@ public class RedisService {
 
     // 문자열 저장
     public void saveString(String key, String value) {
+        log.info("\n\n\n");        
         log.info("📝 Saving key: '{}' with value: '{}'", key, value);
         redisTemplate.opsForValue().set(key, value);
         log.info("✅ Key '{}' saved successfully.", key);
@@ -24,6 +25,7 @@ public class RedisService {
 
     // 문자열 조회
     public String getString(String key) {
+        log.info("\n\n\n");        
         log.info("🔍 Fetching value for key: '{}'", key);
         String value = redisTemplate.opsForValue().get(key);
         if (value != null) {
@@ -36,6 +38,7 @@ public class RedisService {
 
     // 키 삭제
     public void deleteKey(String key) {
+        log.info("\n\n\n");        
         log.info("🗑️ Deleting key: '{}'", key);
         boolean deleted = Boolean.TRUE.equals(redisTemplate.delete(key));
         if (deleted) {
@@ -47,7 +50,8 @@ public class RedisService {
 
     // 전체 키와 값 조회
     public List<Map<String, String>> getAllKeysAndValues() {
-        log.info("📂 Fetching all keys and values...");
+        log.info("\n\n\n");
+        log.info("📂 Fetching all keys and values...");        
         Set<String> keys = redisTemplate.keys("*");
         List<Map<String, String>> result = new ArrayList<>();
 

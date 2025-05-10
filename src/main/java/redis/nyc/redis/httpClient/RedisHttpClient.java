@@ -26,7 +26,7 @@ public class RedisHttpClient {
 
     private ResponseEntity<String> executeRequest(String url, HttpMethod method, HttpEntity<String> entity) {
         try {
-            log.info("▶️ Executing [{}] request to URL: {}", method.name(), url);
+            log.info("▶️ Executing [{}] request to URL: 🔍[{}]", method.name(), url);
             return restTemplate.exchange(url, method, entity, String.class);
         } catch (RestClientException e) {
             log.error("❌ Request failed on {} request to \"{}\": {}",

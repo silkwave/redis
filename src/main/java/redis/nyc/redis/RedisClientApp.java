@@ -21,13 +21,13 @@ public class RedisClientApp implements CommandLineRunner {
     @Override
     public void run(String... args) {
         String key = "TESTKEY";
-        String initialValue = "Hello_World!";
-        String updatedValue = "Updated_Value";
+        String initialValue = "Hello_World";
+        String updatedValue = "Hello_World_Updated";
 
         performRedisOperations(key, initialValue, updatedValue);
     }
 
-    private void performRedisOperations(String key, String initialValue, String updatedValue) {
+    public  void performRedisOperations(String key, String initialValue, String updatedValue) {
         log.info("🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷");
         log.info("🧩 [START] Redis Operations");
         log.info("🔷🔷🔷🔷🔷🔷🔷🔷🔷🔷");
@@ -53,7 +53,7 @@ public class RedisClientApp implements CommandLineRunner {
         log.info("🧩🧩🧩🧩🧩🧩🧩🧩🧩🧩🧩🧩🧩🧩🧩🧩");
 
         log.info("📦 [FETCH ALL] All Redis key-value pairs:");
-        redisHttpClient.getAllKeysAndValues();
+        redisHttpClient.getAllKeysAndValues(); 
 
         log.info("🧩🧩🧩🧩🧩🧩🧩🧩🧩🧩🧩🧩🧩🧩🧩🧩");
 

@@ -1,126 +1,102 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Redis CRUD</title>
-    <link rel="stylesheet" href="/css/style.css"> <!-- CSS 경로 수정 -->
-</head>
-<body>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
     <div class="container">
-        <h1>Redis CRUD Operations</h1>
-        <div class="form-container">
-            <div class="form-item">
-                <label for="key">Key:</label>
-                <input type="text" id="key" placeholder="Enter key">
-            </div>
-            <div class="form-item">
-                <label for="value">Value:</label>
-                <input type="text" id="value" placeholder="Enter value">
-            </div>
-
-            <button id="createBtn">Create</button>
-            <button id="readBtn">Read</button>
-            <button id="updateBtn">Update</button>
-            <button id="deleteBtn">Delete</button>
-            <!-- 전체 조회 버튼 추가 -->
-            <button id="getAllBtn">Get All</button>
+      <h1>Redis CRUD Operations</h1>
+      <div class="form-container">
+        <div class="form-item">
+          <label for="key">Key:</label>
+          <input type="text" id="key" placeholder="Enter key" />
+        </div>
+        <div class="form-item">
+          <label for="value">Value:</label>
+          <input type="text" id="value" placeholder="Enter value" />
         </div>
 
-        <div id="response" class="response"></div>
+        <button id="createBtn">Create</button>
+        <button id="readBtn">Read</button>
+        <button id="updateBtn">Update</button>
+        <button id="deleteBtn">Delete</button>
+        <button id="getAllBtn">Get All</button>
+      </div>
+
+      <div id="response" class="response"></div>
     </div>
 
     <script>
-        const keyInput = document.getElementById('key');
-        const valueInput = document.getElementById('value');
-        const responseDiv = document.getElementById('response');
+      const keyInput = document.getElementById("key");
+      const valueInput = document.getElementById("value");
+      const responseDiv = document.getElementById("response");
 
-        // Create operation
-        document.getElementById('createBtn').addEventListener('click', async () => {
-            const key = keyInput.value;
-            const value = valueInput.value;
-            const response = await fetch(`/api/redis/create?key=${key}&value=${value}`, {
-                method: 'POST'
-            });
-            const data = await response.text();
-            responseDiv.textContent = data;
+      document.getElementById("createBtn").addEventListener("click", async () => {
+        const key = keyInput.value;
+        const value = valueInput.value;
+        const response = await fetch(`/api/redis/${key}?value=${value}`, {
+          method: "POST",
         });
+        const data = await response.text();
+        responseDiv.textContent = data;
+      });
 
-        // Read operation
-        document.getElementById('readBtn').addEventListener('click', async () => {
-            const key = keyInput.value;
-            const response = await fetch(`/api/redis/read?key=${key}`);
-            const data = await response.text();
-            responseDiv.textContent = data;
+      document.getElementById("readBtn").addEventListener("click", async () => {
+        const key = keyInput.value;
+        const response = await fetch(`/api/redis/${key}`);
+        const data = await response.text();
+        responseDiv.textContent = data;
+      });
+
+      document.getElementById("updateBtn").addEventListener("click", async () => {
+        const key = keyInput.value;
+        const value = valueInput.value;
+        const response = await fetch(`/api/redis/${key}?value=${value}`, {
+          method: "PUT",
         });
+        const data = await response.text();
+        responseDiv.textContent = data;
+      });
 
-        // Update operation
-        document.getElementById('updateBtn').addEventListener('click', async () => {
-            const key = keyInput.value;
-            const value = valueInput.value;
-            const response = await fetch(`/api/redis/update?key=${key}&value=${value}`, {
-                method: 'PUT'
-            });
-            const data = await response.text();
-            responseDiv.textContent = data;
+      document.getElementById("deleteBtn").addEventListener("click", async () => {
+        const key = keyInput.value;
+        const response = await fetch(`/api/redis/${key}`, {
+          method: "DELETE",
         });
+        const data = await response.text();
+        responseDiv.textContent = data;
+      });
 
-        // Delete operation
-        document.getElementById('deleteBtn').addEventListener('click', async () => {
-            const key = keyInput.value;
-            const response = await fetch(`/api/redis/delete?key=${key}`, {
-                method: 'DELETE'
-            });
-            const data = await response.text();
-            responseDiv.textContent = data;
-        });
+      document.getElementById("getAllBtn").addEventListener("click", async () => {
+        const response = await fetch("/api/redis/all");
+        const data = await response.json();
 
-        // Get all operation (전체 조회)
-        document.getElementById('getAllBtn').addEventListener('click', async () => {
-            try {
-                const response = await fetch("/api/redis/all");
+        if (Array.isArray(data) && data.length > 0) {
+          const gridContainer = document.createElement("div");
+          gridContainer.classList.add("grid-container");
 
-                // 응답이 성공적인지 확인
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+          data.forEach((item) => {
+            const gridItem = document.createElement("div");
+            gridItem.classList.add("grid-item");
 
-                // 응답을 JSON 형식으로 파싱
-                const data = await response.json();
+            const key = document.createElement("h3");
+            key.textContent = `Key: ${item.key}`;
+            const value = document.createElement("p");
+            value.textContent = `Value: ${item.value}`;
 
-                console.log(data); // 데이터 확인용 로그
+            gridItem.appendChild(key);
+            gridItem.appendChild(value);
+            gridContainer.appendChild(gridItem);
+          });
 
-                // Clear previous response
-                responseDiv.innerHTML = '';
-
-                if (Array.isArray(data) && data.length > 0) {
-                    // Create grid container
-                    const gridContainer = document.createElement("div");
-                    gridContainer.classList.add("grid-container");
-
-                    data.forEach((item) => {
-                        const gridItem = document.createElement("div");
-                        gridItem.classList.add("grid-item");
-
-                        const key = document.createElement("h3");
-                        key.textContent = `Key: ${item.key}`;
-                        const value = document.createElement("p");
-                        value.textContent = `Value: ${item.value}`;
-
-                        gridItem.appendChild(key);
-                        gridItem.appendChild(value);
-                        gridContainer.appendChild(gridItem);
-                    });
-
-                    responseDiv.appendChild(gridContainer);
-                } else {
-                    responseDiv.textContent = "No data found.";
-                }
-            } catch (error) {
-                console.error("Error fetching data:", error);
-                responseDiv.textContent = "Failed to fetch data.";
-            }
-        });
+          responseDiv.appendChild(gridContainer);
+        } else {
+          responseDiv.textContent = "No data found.";
+        }
+      });
     </script>
-</body>
+  </body>
 </html>

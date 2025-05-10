@@ -2,73 +2,67 @@ package redis.nyc.redis.Service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-@Slf4j // Lombok을 사용하여 Logger 자동 생성
+@Slf4j
 @Service
 public class RedisService {
 
     @Autowired
     private StringRedisTemplate redisTemplate;
 
-    // Save string to Redis
+    // 문자열 저장
     public void saveString(String key, String value) {
-        log.info("Saving key: {} with value: {}", key, value); // 로그 추가
+        log.info("📝 Saving key: '{}' with value: '{}'", key, value);
         redisTemplate.opsForValue().set(key, value);
-        log.info("Saved key: {} with value: {}", key, value); // 로그 추가
+        log.info("✅ Key '{}' saved successfully.", key);
     }
 
-    // Get string from Redis
+    // 문자열 조회
     public String getString(String key) {
-        log.info("Fetching value for key: {}", key); // 로그 추가
+        log.info("🔍 Fetching value for key: '{}'", key);
         String value = redisTemplate.opsForValue().get(key);
         if (value != null) {
-            log.info("Retrieved value for key: {}: {}", key, value); // 로그 추가
+            log.info("📦 Value for key '{}': '{}'", key, value);
         } else {
-            log.warn("No value found for key: {}", key); // 값이 없을 때 경고 로그 추가
+            log.warn("⚠️ No value found for key: '{}'", key);
         }
         return value;
     }
 
-    // Delete key from Redis
+    // 키 삭제
     public void deleteKey(String key) {
-        log.info("Deleting key: {}", key); // 로그 추가
-        boolean deleted = redisTemplate.delete(key);
+        log.info("🗑️ Deleting key: '{}'", key);
+        boolean deleted = Boolean.TRUE.equals(redisTemplate.delete(key));
         if (deleted) {
-            log.info("Deleted key: {}", key); // 로그 추가
+            log.info("❌ Key '{}' deleted.", key);
         } else {
-            log.warn("Failed to delete key: {}", key); // 삭제 실패시 경고 로그 추가
+            log.warn("⚠️ Failed to delete key: '{}'", key);
         }
     }
 
+    // 전체 키와 값 조회
     public List<Map<String, String>> getAllKeysAndValues() {
-        log.info("Fetching all keys and their values from Redis."); // 로그 추가
+        log.info("📂 Fetching all keys and values...");
         Set<String> keys = redisTemplate.keys("*");
-        List<Map<String, String>> resultList = new ArrayList<>();
+        List<Map<String, String>> result = new ArrayList<>();
 
-        if (keys != null && !keys.isEmpty()) {
+        if (keys != null) {
             for (String key : keys) {
-                String value = redisTemplate.opsForValue().get(key);
-                Map<String, String> entry = new HashMap<>();
-                entry.put("key", key);
-                entry.put("value", value);
-                resultList.add(entry);
-                log.info("Key: {} | Value: {}", key, value); // 로그 추가
+                if (redisTemplate.type(key) == DataType.STRING) {
+                    String value = redisTemplate.opsForValue().get(key);
+                    result.add(Map.of("key", key, "value", value));
+                    log.info("📄 Retrieved - key: '{}', value: '{}'", key, value);
+                } else {
+                    log.info("⏭️ Skipping non-string key: '{}' (type: {})", key, redisTemplate.type(key));
+                }
             }
-        } else {
-            log.warn("No keys found in Redis."); // 키가 없을 때 경고 로그 추가
         }
 
-        log.info("Fetched all keys and their values from Redis.{}" ,resultList); // 로그 추가   
-             
-        return resultList;
+        return result;
     }
-
 }

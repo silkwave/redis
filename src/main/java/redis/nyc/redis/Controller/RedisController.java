@@ -16,53 +16,49 @@ public class RedisController {
     @Autowired
     private RedisService redisService;
 
-    // Create: Save a new string to Redis
-    @PostMapping("/create")
-    public ResponseEntity<String> createString(@RequestParam String key, @RequestParam String value) {
+    // Create - POST /api/redis/{key}
+    @PostMapping("/{key}")
+    public ResponseEntity<String> createString(@PathVariable("key") String key, @RequestParam("value") String value) {
         redisService.saveString(key, value);
         return ResponseEntity.ok("Created key: " + key + " with value: " + value);
     }
 
-    // Read: Get a string from Redis
-    @GetMapping("/read")
-    public ResponseEntity<String> readString(@RequestParam String key) {
+    // Read - GET /api/redis/{key}
+    @GetMapping("/{key}")
+    public ResponseEntity<String> readString(@PathVariable("key") String key) {
         String value = redisService.getString(key);
         if (value != null) {
-            return ResponseEntity.ok("Value for key " + key + ": " + value);
+            return ResponseEntity.ok("readString Value for key " + key + ": " + value);
+        } else {
+            return ResponseEntity.status(404).body("readString Key not found: " + key);
+        }
+    }
+
+    // Update - PUT /api/redis/{key}
+    @PutMapping("/{key}")
+    public ResponseEntity<String> updateString(@PathVariable("key") String key, @RequestParam("value") String value) {
+        if (redisService.getString(key) != null) {
+            redisService.saveString(key, value);
+            return ResponseEntity.ok("Updated key: " + key + " with new value: " + value);
         } else {
             return ResponseEntity.status(404).body("Key not found: " + key);
         }
     }
 
-    // Update: Update an existing key's value in Redis
-    @PutMapping("/update")
-    public ResponseEntity<String> updateString(@RequestParam String key, @RequestParam String value) {
-        String existingValue = redisService.getString(key);
-        if (existingValue != null) {
-            redisService.saveString(key, value);
-            return ResponseEntity.ok("Updated key: " + key + " with new value: " + value);
-        } else {
-            return ResponseEntity.status(404).body("Key not found  :  " + key);
-        }
-    }
-
-    // Delete: Delete a key from Redis
-    @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteKey(@RequestParam String key) {
-        String value = redisService.getString(key);
-        if (value != null) {
+    // Delete - DELETE /api/redis/{key}
+    @DeleteMapping("/{key}")
+    public ResponseEntity<String> deleteKey(@PathVariable("key") String key) {
+        if (redisService.getString(key) != null) {
             redisService.deleteKey(key);
             return ResponseEntity.ok("Deleted key: " + key);
         } else {
-            return ResponseEntity.status(404).body("Key not found: 111" + key);
+            return ResponseEntity.status(404).body("Key not found: " + key);
         }
     }
 
-    // Controller에서 JSON 응답으로 반환
+    // Get All Keys and Values - GET /api/redis/all
     @GetMapping("/all")
     public ResponseEntity<List<Map<String, String>>> getAllKeysAndValues() {
-        List<Map<String, String>> keysAndValues = redisService.getAllKeysAndValues();
-        return ResponseEntity.ok(keysAndValues);
-        
+        return ResponseEntity.ok(redisService.getAllKeysAndValues());
     }
 }

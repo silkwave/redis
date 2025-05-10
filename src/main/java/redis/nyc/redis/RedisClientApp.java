@@ -21,8 +21,8 @@ public class RedisClientApp implements CommandLineRunner {
     @Override
     public void run(String... args) {
         String key = "TESTKEY";
-        String initialValue = "Hello🎈World!";
-        String updatedValue = "Updated🎈Value";
+        String initialValue = "Hello_World!";
+        String updatedValue = "Updated_Value";
 
         performRedisOperations(key, initialValue, updatedValue);
     }

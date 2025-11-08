@@ -1,72 +1,63 @@
 package redis.nyc.redis.Service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class RedisService {
 
-    @Autowired
-    private StringRedisTemplate redisTemplate;
+    private final StringRedisTemplate redisTemplate;
 
-    // 문자열 저장
-    public void saveString(String key, String value) {
-        log.info("\n\n\n");        
-        log.info("📝 Saving key: '{}' with value: '{}'", key, value);
+    public void saveString(@NonNull String key, @NonNull String value) {
         redisTemplate.opsForValue().set(key, value);
-        log.info("✅ Key '{}' saved successfully.", key);
+        log.info("Saved key: {}", key);
     }
 
-    // 문자열 조회
-    public String getString(String key) {
-        log.info("\n\n\n");        
-        log.info("🔍 Fetching value for key: '{}'", key);
+    public Optional<String> getString(@NonNull String key) {
         String value = redisTemplate.opsForValue().get(key);
-        if (value != null) {
-            log.info("📦 Value for key '{}': '{}'", key, value);
-        } else {
-            log.warn("⚠️ No value found for key: '{}'", key);
-        }
-        return value;
+        log.info("Get key: {}, found: {}", key, value != null);
+        return Optional.ofNullable(value);
     }
 
-    // 키 삭제
-    public void deleteKey(String key) {
-        log.info("\n\n\n");        
-        log.info("🗑️ Deleting key: '{}'", key);
-        boolean deleted = Boolean.TRUE.equals(redisTemplate.delete(key));
-        if (deleted) {
-            log.info("❌ Key '{}' deleted.", key);
-        } else {
-            log.warn("⚠️ Failed to delete key: '{}'", key);
+    public boolean updateString(@NonNull String key, @NonNull String value) {
+        Boolean exists = redisTemplate.hasKey(key);
+        if (Boolean.TRUE.equals(exists)) {
+            redisTemplate.opsForValue().set(key, value);
+            log.info("Updated key: {}", key);
+            return true;
         }
+        log.warn("Update failed: key not found: {}", key);
+        return false;
     }
 
-    // 전체 키와 값 조회
-    public List<Map<String, String>> getAllKeysAndValues() {
-        log.info("\n\n\n");
-        log.info("📂 Fetching all keys and values...");        
-        Set<String> keys = redisTemplate.keys("*");
-        List<Map<String, String>> result = new ArrayList<>();
-
-        if (keys != null) {
-            for (String key : keys) {
-                if (redisTemplate.type(key) == DataType.STRING) {
-                    String value = redisTemplate.opsForValue().get(key);
-                    result.add(Map.of("key", key, "value", value));
-                    log.info("📄 Retrieved - key: '{}', value: '{}'", key, value);
-                } else {
-                    log.info("⏭️ Skipping non-string key: '{}' (type: {})", key, redisTemplate.type(key));
-                }
-            }
-        }
-
+    public boolean deleteKey(@NonNull String key) {
+        Boolean deleted = redisTemplate.delete(key);
+        boolean result = Boolean.TRUE.equals(deleted);
+        log.info("Delete key: {} → {}", key, result);
         return result;
+    }
+
+    @NonNull
+    public List<Map<String, String>> getAllKeysAndValues() {
+        Set<String> keys = redisTemplate.keys("*");
+        Set<String> nonNullKeys = Optional.ofNullable(keys).orElse(Collections.emptySet());
+
+        return nonNullKeys.stream()
+                .map(key -> {
+                    String value = redisTemplate.opsForValue().get(key);
+                    Map<String, String> entry = new HashMap<>();
+                    entry.put("key", key);
+                    entry.put("value", Objects.requireNonNullElse(value, "null"));
+                    return entry;
+                })
+                .collect(Collectors.toList());
     }
 }

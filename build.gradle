@@ -9,7 +9,7 @@ version = '0.0.1-SNAPSHOT'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
@@ -33,7 +33,10 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'  // Spring Boot 기본 테스트 라이브러리
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'          // JUnit 5 의존성
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0'        // JUnit 5 엔진 의존성
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.7.0'
+    testImplementation 'org.junit.platform:junit-platform-commons:1.7.0'
+    testImplementation 'org.junit.platform:junit-platform-launcher:1.7.0'
+    testImplementation 'org.junit.platform:junit-platform-engine:1.7.0'
 }
 
 tasks.withType(JavaCompile) {
@@ -47,6 +50,10 @@ springBoot {
 
 tasks.named('test') {
     useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+        showStandardStreams = true
+    }
 }
 
 tasks.named('bootJar') {

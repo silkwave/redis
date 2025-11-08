@@ -13,11 +13,9 @@ public class RedisConfig {
     public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
-
-        // Key와 Value에 사용할 직렬화 방법 설정
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new StringRedisSerializer());
-
+        redisTemplate.afterPropertiesSet(); // 중요: 초기화
         return redisTemplate;
     }
 }

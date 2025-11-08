@@ -2,6 +2,7 @@ package redis.nyc.redis.httpClient;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -20,11 +21,11 @@ public class RedisHttpClient {
         return URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
 
-    private ResponseEntity<String> executeRequest(String url, HttpMethod method) {
+    private ResponseEntity<String> executeRequest(@NonNull String url, HttpMethod method) {
         return executeRequest(url, method, new HttpEntity<>(new HttpHeaders()));
     }
 
-    private ResponseEntity<String> executeRequest(String url, HttpMethod method, HttpEntity<String> entity) {
+    private ResponseEntity<String> executeRequest(@NonNull String url, HttpMethod method, HttpEntity<String> entity) {
         try {
             log.info("▶️ Executing [{}] request to URL: 🔍[{}]", method.name(), url);
             return restTemplate.exchange(url, method, entity, String.class);

@@ -31,8 +31,8 @@ public class RedisClientAppTest {
     @Test
     public void testPerformRedisOperations() {
         String key = "TESTKEY";
-        String initialValue = "Hello_World!";
-        String updatedValue = "Updated_Value";
+        String initialValue = "Hello_World";
+        String updatedValue = "Hello_World_Updated";
 
         // Simulate redis operations
         doNothing().when(redisHttpClient).createString(key, initialValue);

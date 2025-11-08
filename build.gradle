@@ -30,13 +30,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'  // Spring Boot 기본 테스트 라이브러리
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'          // JUnit 5 의존성
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0'        // JUnit 5 엔진 의존성
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.7.0'
-    testImplementation 'org.junit.platform:junit-platform-commons:1.7.0'
-    testImplementation 'org.junit.platform:junit-platform-launcher:1.7.0'
-    testImplementation 'org.junit.platform:junit-platform-engine:1.7.0'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.withType(JavaCompile) {

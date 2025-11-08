@@ -45,6 +45,7 @@ public class RedisService {
         return result;
     }
 
+    @SuppressWarnings("null")
     @NonNull
     public List<Map<String, String>> getAllKeysAndValues() {
         Set<String> keys = redisTemplate.keys("*");
